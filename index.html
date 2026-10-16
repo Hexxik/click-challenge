@@ -1,0 +1,155 @@
+
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Click Challenge</title>
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: #101024;
+      color: white;
+      font-family: system-ui, sans-serif;
+      display: grid;
+      place-items: center;
+      padding: 20px;
+    }
+
+    main {
+      width: 100%;
+      max-width: 520px;
+      text-align: center;
+      background: #20203c;
+      padding: 24px;
+      border-radius: 24px;
+    }
+
+    h1 { color: #a99bff; }
+
+    .stats {
+      display: flex;
+      justify-content: space-around;
+      margin: 24px 0;
+      font-size: 18px;
+    }
+
+    #arena {
+      height: 260px;
+      position: relative;
+      background: #111127;
+      border-radius: 16px;
+      overflow: hidden;
+    }
+
+    #target {
+      position: absolute;
+      width: 54px;
+      height: 54px;
+      border: 0;
+      border-radius: 50%;
+      background: #ff4f91;
+      box-shadow: 0 0 24px #ff4f91;
+      cursor: pointer;
+      display: none;
+      touch-action: manipulation;
+    }
+
+    #start {
+      margin: 18px 0;
+      border: 0;
+      padding: 13px 24px;
+      border-radius: 12px;
+      background: #9380ff;
+      color: white;
+      font-weight: bold;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    #message { color: #d0caff; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>🎯 Click Challenge</h1>
+    <p>Chyť čo najviac terčov za 20 sekúnd!</p>
+
+    <div class="stats">
+      <div>Body: <strong id="score">0</strong></div>
+      <div>Čas: <strong id="time">20</strong>s</div>
+    </div>
+
+    <div id="arena">
+      <button id="target" aria-label="Klikni na terč"></button>
+    </div>
+
+    <button id="start">ŠTART!</button>
+    <p id="message">Pripravený na výzvu, boss? 🔥</p>
+  </main>
+
+  <script>
+    const arena = document.getElementById("arena");
+    const target = document.getElementById("target");
+    const start = document.getElementById("start");
+    const scoreText = document.getElementById("score");
+    const timeText = document.getElementById("time");
+    const message = document.getElementById("message");
+
+    let score = 0;
+    let time = 20;
+    let playing = false;
+    let timer;
+
+    function moveTarget() {
+      const maxX = arena.clientWidth - target.offsetWidth;
+      const maxY = arena.clientHeight - target.offsetHeight;
+
+      target.style.left = Math.random() * maxX + "px";
+      target.style.top = Math.random() * maxY + "px";
+    }
+
+    function endGame() {
+      playing = false;
+      clearInterval(timer);
+      target.style.display = "none";
+      start.disabled = false;
+      start.textContent = "HRAŤ ZNOVA";
+      message.textContent = `Koniec! Tvoje skóre: ${score} bodov! 🏆`;
+    }
+
+    start.addEventListener("click", () => {
+      clearInterval(timer);
+      score = 0;
+      time = 20;
+      playing = true;
+
+      scoreText.textContent = score;
+      timeText.textContent = time;
+      message.textContent = "CHYŤ TERČ! ⚡";
+      start.disabled = true;
+      start.textContent = "HRÁŠ...";
+      target.style.display = "block";
+      moveTarget();
+
+      timer = setInterval(() => {
+        time--;
+        timeText.textContent = time;
+
+        if (time <= 0) endGame();
+      }, 1000);
+    });
+
+    target.addEventListener("click", () => {
+      if (!playing) return;
+
+      score++;
+      scoreText.textContent = score;
+      moveTarget();
+    });
+  </script>
+</body>
+</html>
